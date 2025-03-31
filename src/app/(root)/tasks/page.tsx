@@ -52,7 +52,7 @@ export default function TasksPage() {
             <TasksHeader currentView={view} onViewChange={handleViewChange} />
 
             <Card className="overflow-hidden">
-                <CardContent className="p-0 md:p-6">
+                <CardContent className="p-0">
                     {view === 'table' ? <TasksTable /> : <TasksKanban />}
                 </CardContent>
             </Card>

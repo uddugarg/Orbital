@@ -187,3 +187,27 @@ export async function fetchTasksApi(page: number, perPage: number) {
     }, 500);
   });
 }
+
+export function renderCellValue(task: Task, key: keyof Task): React.ReactNode {
+  const value = task[key];
+
+  if (value === null || value === undefined) {
+    return '-';
+  }
+
+  if (typeof value === 'object') {
+    if (key === 'assignee' && 'name' in value) {
+      return value.name as string;
+    }
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+    if (value instanceof Date) {
+      return value.toLocaleDateString();
+    }
+    return JSON.stringify(value);
+  }
+
+  // Return primitive values directly
+  return value as React.ReactNode;
+}

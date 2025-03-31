@@ -33,11 +33,14 @@ import {
     formatDate,
     getStatusColor,
     getPriorityColor,
-    getDueDateStatus
+    getDueDateStatus,
+    renderCellValue
 } from '@/lib/utils';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 type ColumnType = {
     key: keyof Task | 'actions';
@@ -61,7 +64,8 @@ export default function TasksTable() {
     const tableColumns = useSelector((state: RootState) => state.ui.tableColumns);
     const [columns, setColumns] = useState<ColumnType[]>([]);
 
-    const tableContainerRef = useRef<HTMLDivElement>(null);
+    // Row height for virtualization
+    const ROW_HEIGHT = 72;
 
     useEffect(() => {
         if (!isInitialized) {
@@ -198,31 +202,12 @@ export default function TasksTable() {
         );
     }, [tableColumns]);
 
-    const handleScroll = useCallback(() => {
-        if (!tableContainerRef.current) return;
-
-        const { scrollTop, scrollHeight, clientHeight } = tableContainerRef.current;
-
-        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 200;
-
-        const shouldLoadMore = isNearBottom &&
-            !loading &&
-            !loadingMore &&
-            filteredItems.length < totalCount;
-
-        if (shouldLoadMore) {
-            // Load 10 more tasks
+    // Load more data when approaching the end of the list
+    const loadMoreItems = useCallback(() => {
+        if (!loading && !loadingMore && filteredItems.length < totalCount) {
             dispatch(loadMoreTasks(10));
         }
     }, [dispatch, filteredItems.length, loading, loadingMore, totalCount]);
-
-    useEffect(() => {
-        const container = tableContainerRef.current;
-        if (container) {
-            container.addEventListener('scroll', handleScroll);
-            return () => container.removeEventListener('scroll', handleScroll);
-        }
-    }, [handleScroll]);
 
     const handleViewTask = (task: Task) => {
         dispatch(setSelectedTask(task));
@@ -267,7 +252,13 @@ export default function TasksTable() {
 
         return (
             <TableHead
-                ref={(node) => drag(drop(node))}
+                ref={(node) => {
+                    // Explicitly type 'node' as HTMLElement or null
+                    const element = node as HTMLElement | null;
+                    // Apply both refs
+                    drag(element);
+                    drop(element);
+                }}
                 className={`${isOver ? 'bg-accent' : ''}`}
                 style={{ opacity: isDragging ? 0.5 : 1 }}
             >
@@ -295,10 +286,50 @@ export default function TasksTable() {
         );
     };
 
+    const VirtualRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+        const task = filteredItems[index];
+        if (!task) return null;
+
+        return (
+            <div style={style} className="flex border-b">
+                {columns.map((column, colIndex) => (
+                    <div
+                        key={`${task.id}-${column.key}`}
+                        className="py-4 px-4 flex items-center"
+                        style={{
+                            flex: column.key === 'title' ? '2' : '1',
+                            minWidth: column.key === 'title' ? '300px' : '150px',
+                            overflow: 'hidden'
+                        }}
+                        onClick={() => handleViewTask(task)}
+                    >
+                        {column.render
+                            ? column.render(task)
+                            : renderCellValue(task, column.key as keyof Task)}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    const onItemsRendered = ({ visibleStopIndex }: { visibleStopIndex: number }) => {
+        if (visibleStopIndex >= filteredItems.length - 10) {
+            loadMoreItems();
+        }
+    };
+
+    if (loading && filteredItems.length === 0) {
+        return (
+            <div className="flex justify-center items-center h-64 border rounded-md">
+                <Loader2 className="h-8 w-8 animate-spin mr-2" />
+                <span>Loading tasks...</span>
+            </div>
+        );
+    }
+
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="relative border rounded-md">
-                {/* Fixed header */}
+            <div className="border rounded-md">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -313,60 +344,37 @@ export default function TasksTable() {
                     </TableHeader>
                 </Table>
 
-                {/* Scrollable body */}
-                <div
-                    ref={tableContainerRef}
-                    className="overflow-y-auto max-h-[70vh] overflow-x-auto"
-                    style={{ scrollBehavior: 'smooth' }}
-                >
-                    <Table>
-                        <TableBody>
-                            {filteredItems.length === 0 ? (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={columns.length}
-                                        className="h-24 text-center"
-                                    >
-                                        {loading ? (
-                                            <div className="flex justify-center items-center">
-                                                <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                                                <span>Loading tasks...</span>
-                                            </div>
-                                        ) : (
-                                            "No tasks found."
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                filteredItems.map((task) => (
-                                    <TableRow
-                                        key={task.id}
-                                        onClick={() => handleViewTask(task)}
-                                        className="cursor-pointer hover:bg-accent/50"
-                                    >
-                                        {columns.map((column) => (
-                                            <TableCell key={`${task.id}-${column.key}`}>
-                                                {column.render
-                                                    ? column.render(task)
-                                                    : task[column.key as keyof Task]}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-
-                    {/* Loading indicator at the bottom */}
-                    {loadingMore && (
-                        <div className="p-4 text-center">
-                            <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Loading more tasks...
-                            </p>
+                {/* Virtualized table body */}
+                <div className="h-[70vh] w-full">
+                    {filteredItems.length === 0 ? (
+                        <div className="h-full flex justify-center items-center">
+                            No tasks found.
                         </div>
+                    ) : (
+                        <AutoSizer>
+                            {({ height, width }) => (
+                                <List
+                                    height={height}
+                                    width={width}
+                                    itemCount={filteredItems.length}
+                                    itemSize={ROW_HEIGHT}
+                                    onItemsRendered={onItemsRendered}
+                                >
+                                    {VirtualRow}
+                                </List>
+                            )}
+                        </AutoSizer>
                     )}
                 </div>
+
+                {loadingMore && (
+                    <div className="p-4 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Loading more tasks...
+                        </p>
+                    </div>
+                )}
             </div>
         </DndProvider>
     );

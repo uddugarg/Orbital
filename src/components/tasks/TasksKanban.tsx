@@ -45,7 +45,7 @@ const DraggableTaskCard = ({ task, onClick }: TaskCardProps) => {
 
     return (
         <div
-            ref={drag}
+            ref={drag as unknown as React.RefObject<HTMLDivElement>}
             className={`${isDragging ? 'opacity-50' : 'opacity-100'}`}
             onClick={() => onClick(task)}
         >
@@ -123,7 +123,7 @@ const KanbanColumn = ({ column, tasks, onTaskClick, onTaskDrop }: {
 
     return (
         <div
-            ref={drop}
+            ref={drop as unknown as React.RefObject<HTMLDivElement>}
             className={`flex flex-col h-full min-h-[70vh] rounded-md p-2 ${isOver ? 'bg-accent/70' : 'bg-muted/30'
                 }`}
         >
