@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background - Using hsl color: 346.8 77.2% 49.8% -->
+  <rect width="200" height="200" rx="40" fill="hsl(346.8, 77.2%, 49.8%)" />
+  
+  <!-- Task Flow Lines -->
+  <path d="M40 70 H160" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.8" />
+  <path d="M40 100 H120" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.9" />
+  <path d="M40 130 H140" stroke="white" stroke-width="12" stroke-linecap="round" opacity="0.8" />
+  
+  <!-- Task Checkmarks and Circles -->
+  <circle cx="160" cy="100" r="15" fill="white" />
+  <path d="M152 100 L158 106 L168 96" stroke="hsl(346.8, 77.2%, 49.8%)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <circle cx="140" cy="70" r="8" fill="white" opacity="0.5" />
+  <circle cx="120" cy="130" r="8" fill="white" opacity="0.5" />
+</svg>
