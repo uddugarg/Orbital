@@ -5,7 +5,7 @@
 Orbital is a modern task management application built with Next.js, offering a comprehensive solution for organizing and tracking tasks, projects, and workflow analytics. The application aims to provide a seamless user experience with a focus on both functionality and aesthetics.
 
 <div align="center">
-  <img src="hld-diagram.svg" alt="High Level Architecture Diagram" width="100%" />
+  <img src="/public/hld-diagram.svg" alt="High Level Architecture Diagram" width="100%" />
   <p><i>Figure 1: Orbital Task Management Application - High Level Architecture</i></p>
 </div>
 
