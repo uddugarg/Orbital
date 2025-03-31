@@ -253,9 +253,7 @@ export default function TasksTable() {
         return (
             <TableHead
                 ref={(node) => {
-                    // Explicitly type 'node' as HTMLElement or null
                     const element = node as HTMLElement | null;
-                    // Apply both refs
                     drag(element);
                     drop(element);
                 }}

@@ -50,22 +50,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right section: App screenshot */}
           <div className="relative hidden md:block">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg blur-3xl opacity-30"></div>
             <div className="relative bg-background border border-border rounded-lg shadow-xl overflow-hidden">
-              {/* Replace with your actual app screenshot */}
               <div className="aspect-[16/10] relative bg-muted">
                 <Image
                   src="/app-screenshot.png"
                   alt="Orbital app screenshot"
                   fill
-                // className="object-contain"
-                // If you don't have an image yet, remove the Image component and use this placeholder:
-                // style={{ background: "linear-gradient(to bottom right, #3b82f6, #8b5cf6)" }}
                 />
 
-                {/* Fallback if image is not available */}
                 <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
                   <span>App Screenshot</span>
                 </div>

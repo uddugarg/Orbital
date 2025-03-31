@@ -14,7 +14,6 @@ const fetchTasksFromApi = async (limit: number = 10) => {
     };
 };
 
-// Add this new async thunk action
 export const createTask = createAsyncThunk(
     'tasks/createTask',
     async (taskData: {
@@ -25,16 +24,10 @@ export const createTask = createAsyncThunk(
         dueDate: Date;
         estimatedHours: number;
     }) => {
-        // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // In a real app, you would make an API call to create the task
-        // and the server would return the created task with an ID
-
-        // For now, generate a random ID
         const id = `task-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-        // Create a new task object
         const newTask: Task = {
             id,
             title: taskData.title,
@@ -46,13 +39,12 @@ export const createTask = createAsyncThunk(
             createdAt: new Date().toISOString(),
             completedAt: null,
             assignee: {
-                // Placeholder assignee (in a real app, this would be the current user or assigned user)
                 id: 'current-user',
                 name: 'Current User',
                 avatar: '/avatars/avatar-1.png',
             },
-            tags: [], // Empty tags for now
-            comments: [], // No comments initially
+            tags: [],
+            comments: [],
         };
 
         return newTask;
@@ -207,7 +199,7 @@ function generateAdditionalTasks(startIndex: number, count: number): Task[] {
     // Generate additional tasks starting from the given index
     for (let i = 0; i < count; i++) {
         const index = startIndex + i;
-        if (index >= 200) break; // Total dummy tasks limit
+        if (index >= 200) break;
 
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + Math.floor(Math.random() * 30));
@@ -303,7 +295,7 @@ const tasksSlice = createSlice({
                 state.loading = false;
                 state.items = action.payload.tasks;
                 state.totalCount = action.payload.totalCount;
-                state.isInitialized = true; // Mark as initialized
+                state.isInitialized = true;
                 applyFiltersAndSort(state);
             })
             .addCase(fetchTasks.rejected, (state, action) => {
@@ -315,7 +307,6 @@ const tasksSlice = createSlice({
             })
             .addCase(loadMoreTasks.fulfilled, (state, action) => {
                 state.loadingMore = false;
-                // Append new tasks to the existing ones
                 state.items = [...state.items, ...action.payload.tasks];
                 applyFiltersAndSort(state);
             })
@@ -336,7 +327,6 @@ const tasksSlice = createSlice({
             .addCase(updateTaskStatus.fulfilled, (state, action) => {
                 const { taskId, status } = action.payload;
 
-                // Update in the main items array
                 const task = state.items.find(task => task.id === taskId);
                 if (task) {
                     task.status = status;
@@ -347,7 +337,6 @@ const tasksSlice = createSlice({
                     }
                 }
 
-                // Update in the selected task if it's the same task
                 if (state.selectedTask?.id === taskId) {
                     state.selectedTask.status = status;
                     if (status === 'completed' && !state.selectedTask.completedAt) {

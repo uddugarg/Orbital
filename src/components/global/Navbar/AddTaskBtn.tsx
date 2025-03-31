@@ -78,7 +78,6 @@ export default function AddTaskBtn() {
             [field]: value,
         });
 
-        // Clear error for this field
         if (errors[field]) {
             setErrors({
                 ...errors,
@@ -97,7 +96,6 @@ export default function AddTaskBtn() {
         setIsSubmitting(true);
 
         try {
-            // Dispatch the createTask action with the form data
             const resultAction = await dispatch(createTask({
                 title: formData.title,
                 description: formData.description,
@@ -113,7 +111,6 @@ export default function AddTaskBtn() {
                     description: `"${formData.title}" has been created successfully.`,
                 });
 
-                // Reset form and close dialog
                 setFormData({
                     title: '',
                     description: '',
@@ -125,7 +122,6 @@ export default function AddTaskBtn() {
 
                 setOpen(false);
             } else {
-                // Handle error
                 toast.error("Failed to create task", {
                     description: 'There was an error creating the task. Please try again.',
                 });

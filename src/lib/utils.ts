@@ -208,6 +208,5 @@ export function renderCellValue(task: Task, key: keyof Task): React.ReactNode {
     return JSON.stringify(value);
   }
 
-  // Return primitive values directly
   return value as React.ReactNode;
 }
