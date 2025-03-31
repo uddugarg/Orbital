@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720">
+  <!-- Background rectangle -->
+  <rect width="960" height="720" fill="#f8f9fa" />
+  
+  <!-- Title -->
+  <text x="480" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#333">Orbital Task Management Application - High Level Architecture</text>
+  
+  <!-- Architecture Layers -->
+  <g>
+    <!-- UI Layer -->
+    <rect x="100" y="100" width="760" height="120" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" />
+    <text x="130" y="125" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1976d2">UI Layer</text>
+    
+    <!-- Pages -->
+    <rect x="130" y="140" width="160" height="60" rx="4" fill="#bbdefb" stroke="#2196f3" stroke-width="1" />
+    <text x="210" y="175" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Pages</text>
+    
+    <!-- Components -->
+    <rect x="320" y="140" width="160" height="60" rx="4" fill="#bbdefb" stroke="#2196f3" stroke-width="1" />
+    <text x="400" y="175" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Components</text>
+    
+    <!-- UI Components -->
+    <rect x="510" y="140" width="160" height="60" rx="4" fill="#bbdefb" stroke="#2196f3" stroke-width="1" />
+    <text x="590" y="175" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">UI Components</text>
+    
+    <!-- Hooks -->
+    <rect x="700" y="140" width="130" height="60" rx="4" fill="#bbdefb" stroke="#2196f3" stroke-width="1" />
+    <text x="765" y="175" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Custom Hooks</text>
+    
+    <!-- State Management Layer -->
+    <rect x="100" y="250" width="760" height="120" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" />
+    <text x="130" y="275" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2e7d32">State Management Layer</text>
+    
+    <!-- Redux Store -->
+    <rect x="130" y="290" width="220" height="60" rx="4" fill="#c8e6c9" stroke="#4caf50" stroke-width="1" />
+    <text x="240" y="325" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Redux Store</text>
+    
+    <!-- Tasks Slice -->
+    <rect x="380" y="290" width="160" height="60" rx="4" fill="#c8e6c9" stroke="#4caf50" stroke-width="1" />
+    <text x="460" y="325" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Tasks Slice</text>
+    
+    <!-- UI Slice -->
+    <rect x="570" y="290" width="160" height="60" rx="4" fill="#c8e6c9" stroke="#4caf50" stroke-width="1" />
+    <text x="650" y="325" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">UI Slice</text>
+    
+    <!-- Services and Utilities Layer -->
+    <rect x="100" y="400" width="760" height="120" rx="8" fill="#fff3e0" stroke="#ff9800" stroke-width="2" />
+    <text x="130" y="425" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#e65100">Services &amp; Utilities Layer</text>
+    
+    <!-- API Service -->
+    <rect x="130" y="440" width="160" height="60" rx="4" fill="#ffe0b2" stroke="#ff9800" stroke-width="1" />
+    <text x="210" y="475" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">API Service</text>
+    
+    <!-- Utils -->
+    <rect x="320" y="440" width="160" height="60" rx="4" fill="#ffe0b2" stroke="#ff9800" stroke-width="1" />
+    <text x="400" y="475" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Utility Functions</text>
+    
+    <!-- Data Transformers -->
+    <rect x="510" y="440" width="160" height="60" rx="4" fill="#ffe0b2" stroke="#ff9800" stroke-width="1" />
+    <text x="590" y="475" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Data Transformers</text>
+    
+    <!-- Constants -->
+    <rect x="700" y="440" width="130" height="60" rx="4" fill="#ffe0b2" stroke="#ff9800" stroke-width="1" />
+    <text x="765" y="475" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Constants</text>
+    
+    <!-- Routing Layer -->
+    <rect x="100" y="550" width="760" height="120" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" />
+    <text x="130" y="575" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#6a1b9a">Routing &amp; Navigation Layer</text>
+    
+    <!-- Next.js Routing -->
+    <rect x="130" y="590" width="340" height="60" rx="4" fill="#e1bee7" stroke="#9c27b0" stroke-width="1" />
+    <text x="300" y="625" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Next.js App Router</text>
+    
+    <!-- Layouts -->
+    <rect x="500" y="590" width="330" height="60" rx="4" fill="#e1bee7" stroke="#9c27b0" stroke-width="1" />
+    <text x="665" y="625" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Layouts &amp; Page Templates</text>
+  </g>
+  
+  <!-- Connecting lines -->
+  <!-- UI to State -->
+  <line x1="480" y1="220" x2="480" y2="250" stroke="#555" stroke-width="2" stroke-dasharray="5,5" />
+  <polygon points="480,250 475,240 485,240" fill="#555" />
+  
+  <!-- State to Services -->
+  <line x1="480" y1="370" x2="480" y2="400" stroke="#555" stroke-width="2" stroke-dasharray="5,5" />
+  <polygon points="480,400 475,390 485,390" fill="#555" />
+  
+  <!-- Services to Routing -->
+  <line x1="480" y1="520" x2="480" y2="550" stroke="#555" stroke-width="2" stroke-dasharray="5,5" />
+  <polygon points="480,550 475,540 485,540" fill="#555" />
+  
+  <!-- Feature highlights -->
+  <!-- Dashboard -->
+  <g>
+    <rect x="50" y="100" width="30" height="570" rx="4" fill="#e0e0e0" stroke="#9e9e9e" stroke-width="1" />
+    <text x="65" y="390" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#616161" transform="rotate(-90, 65, 390)">Key Features</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="140" width="80" height="60" rx="4" fill="#ffebee" stroke="#f44336" stroke-width="1" />
+    <text x="910" y="175" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Dashboard</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="210" width="80" height="60" rx="4" fill="#e8eaf6" stroke="#3f51b5" stroke-width="1" />
+    <text x="910" y="245" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Task Table</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="280" width="80" height="60" rx="4" fill="#e0f7fa" stroke="#00bcd4" stroke-width="1" />
+    <text x="910" y="315" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Kanban Board</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="350" width="80" height="60" rx="4" fill="#f1f8e9" stroke="#8bc34a" stroke-width="1" />
+    <text x="910" y="385" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Task Details</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="420" width="80" height="60" rx="4" fill="#fce4ec" stroke="#e91e63" stroke-width="1" />
+    <text x="910" y="455" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Search</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="490" width="80" height="60" rx="4" fill="#fffde7" stroke="#ffeb3b" stroke-width="1" />
+    <text x="910" y="525" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Charts</text>
+  </g>
+  
+  <g>
+    <rect x="870" y="560" width="80" height="60" rx="4" fill="#e0f2f1" stroke="#009688" stroke-width="1" />
+    <text x="910" y="595" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Theming</text>
+  </g>
+</svg>
