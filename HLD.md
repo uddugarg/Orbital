@@ -5,7 +5,8 @@
 Orbital is a modern task management application built with Next.js, offering a comprehensive solution for organizing and tracking tasks, projects, and workflow analytics. The application aims to provide a seamless user experience with a focus on both functionality and aesthetics.
 
 <div align="center">
-  <img src="/public/architecture-diagram.png" alt="System Architecture" width="80%" />
+  <img src="hld-diagram.svg" alt="High Level Architecture Diagram" width="100%" />
+  <p><i>Figure 1: Orbital Task Management Application - High Level Architecture</i></p>
 </div>
 
 ## 2. Architecture
@@ -247,7 +248,37 @@ Implemented in Redux with the following approach:
 3. **State Updates**: Optimized Redux updates to minimize re-renders
 4. **Transition Animations**: CSS transitions for smooth UI changes
 
-## 7. Future Enhancements
+## 7. Testing Strategy
+
+### 7.1 Testing Levels
+
+1. **Unit Tests**: Testing individual components and functions
+
+   - Redux store and reducers
+   - UI components
+   - Utility functions
+   - Custom hooks
+
+2. **Integration Tests**: Testing component interactions
+
+   - Page-level integration
+   - Feature flows (search → task detail)
+   - State management integration
+
+3. **End-to-End Tests**: Testing complete user journeys
+   - Task creation to completion
+   - Dashboard analytics accuracy
+   - Filter and sort operations
+
+### 7.2 Testing Tools
+
+- **Jest**: Test runner and assertion library
+- **React Testing Library**: Component testing
+- **Mock Service Worker**: API mocking
+- **jest-dom**: DOM testing utilities
+- **Coverage Reports**: Track test coverage metrics
+
+## 8. Future Enhancements
 
 1. **Authentication System**: User accounts, roles, and permissions
 2. **Real-time Updates**: WebSocket integration for live updates
@@ -258,7 +289,7 @@ Implemented in Redux with the following approach:
 7. **Integrations**: Calendar, email, and third-party services
 8. **Mobile Application**: Native mobile apps using React Native
 
-## 8. Security Considerations
+## 9. Security Considerations
 
 1. **API Authentication**: Token-based authentication
 2. **Data Validation**: Client and server-side validation
