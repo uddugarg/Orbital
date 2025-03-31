@@ -17,7 +17,7 @@ export default function SettingsDialog() {
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                     <Settings className="h-4 w-4 mr-2" />
-                    Settings
+                    Column Settings
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[550px]">
