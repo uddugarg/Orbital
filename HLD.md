@@ -5,7 +5,7 @@
 Orbital is a modern task management application built with Next.js, offering a comprehensive solution for organizing and tracking tasks, projects, and workflow analytics. The application aims to provide a seamless user experience with a focus on both functionality and aesthetics.
 
 <div align="center">
-  <img src="/public/hld-diagram.svg" alt="High Level Architecture Diagram" width="100%" />
+  <img src="hld-diagram.svg" alt="High Level Architecture Diagram" width="100%" />
   <p><i>Figure 1: Orbital Task Management Application - High Level Architecture</i></p>
 </div>
 
@@ -25,10 +25,11 @@ The application follows a component-based architecture built upon the React ecos
 
 - **Global State**: Redux Toolkit for app-wide state management
   - Tasks data
-  - UI preferences (theme, layout options)
+  - UI preferences (theme, layout options, column settings)
   - Filter/sort options
 - **Local State**: React hooks for component-specific state
 - **Form State**: React Hook Form for form handling
+- **Persistence**: LocalStorage for user preferences and column settings
 
 #### Data Flow
 
@@ -46,16 +47,19 @@ Layout (Root)
 ├── Navbar
 │   ├── SearchBar (Global Search)
 │   ├── ThemeToggle
+│   ├── SettingsDialog
+│   │   └── ColumnSettings
 │   └── AddTaskButton
 └── Main Content
     ├── Dashboard Page
+    │   ├── DashboardFilters
     │   ├── Statistics Cards
     │   ├── Charts (Recharts)
     │   └── Task Reminders
     └── Tasks Page
         ├── Filter/Sort Controls
         ├── View Toggle (Table/Kanban)
-        ├── TasksTable (with infinite scroll)
+        ├── TasksTable (with virtualization)
         ├── TasksKanban
         └── TaskDetailDrawer
 ```
@@ -97,6 +101,12 @@ Layout (Root)
 - Estimation accuracy
 - Task distribution
 
+**Dashboard Filtering:**
+
+- Synchronized filters between dashboard and tasks view
+- Filter controls affecting all charts simultaneously
+- Filter state maintained in Redux
+
 ### 3.3 User Interface System
 
 **Design System:**
@@ -110,9 +120,26 @@ Layout (Root)
 **Interactive Elements:**
 
 - Drag and drop for task reordering and status updates
-- Infinite scroll for efficient data loading
+- Virtualized scrolling for efficient data rendering
 - Search with keyboard shortcuts (⌘+K)
 - Custom scrollable containers
+- Column management via Settings panel
+
+### 3.4 Column Management System
+
+**Features:**
+
+- Show/hide individual columns
+- Reorder columns via drag-and-drop
+- Persist settings in localStorage
+- Reset to default configuration
+
+**Implementation:**
+
+- Redux state for managing column visibility and order
+- DnD integration for reordering
+- Settings dialog with dedicated column management UI
+- Automatic state persistence between sessions
 
 ## 4. Data Models
 
@@ -161,6 +188,7 @@ interface TasksState {
   filteredItems: Task[];
   selectedTask: Task | null;
   loading: boolean;
+  loadingMore: boolean;
   error: string | null;
   totalCount: number;
   filterStatus: TaskStatus | "all";
@@ -169,6 +197,7 @@ interface TasksState {
   sortDirection: "asc" | "desc";
   searchQuery: string;
   view: "table" | "kanban";
+  isInitialized: boolean;
 }
 
 interface UIState {
@@ -176,77 +205,143 @@ interface UIState {
   taskDrawerOpen: boolean;
   darkMode: boolean;
   tableColumns: string[];
+  columnSettings: ColumnVisibility[];
+}
+
+interface ColumnVisibility {
+  key: string;
+  visible: boolean;
+  order: number;
 }
 ```
 
 ## 5. Technical Implementation
 
-### 5.1 Infinite Scrolling
+### 5.1 Table Virtualization
 
-The TasksTable component implements efficient infinite scrolling with the following approach:
+The TasksTable component implements virtualization for optimal performance with large datasets:
 
-1. **Mounting**: Initially displays the first 10 items
-2. **Scroll Detection**: Monitors scroll position via scroll event listeners
-3. **Threshold Detection**: Triggers data loading when approaching bottom of container
-4. **Incremental Loading**: Adds 10 more items at a time to the visible set
-5. **Loading State**: Displays loading indicator during data fetch
-6. **Optimization**: Maintains only necessary re-renders through careful dependency management
+1. **Implementation**: Uses `react-window` and `react-window-infinite-loader` libraries
+2. **Benefits**:
+   - Only renders visible rows, reducing DOM nodes
+   - Maintains consistent performance with any data size
+   - Smooth scrolling experience
+   - Reduced memory usage
 
 ```typescript
-// Simplified Pseudocode
-useEffect(() => {
-  const handleScroll = () => {
-    if (
-      scrollHeight - scrollTop - clientHeight < 100 &&
-      !loading &&
-      hasMoreItems
-    ) {
-      loadMoreItems();
-    }
-  };
-
-  containerRef.current.addEventListener("scroll", handleScroll);
-  return () => containerRef.current.removeEventListener("scroll", handleScroll);
-}, [loading, hasMoreItems]);
+// Simplified implementation
+<InfiniteLoader
+  isItemLoaded={(index) => index < items.length}
+  itemCount={hasMore ? items.length + 1 : items.length}
+  loadMoreItems={loadMoreItems}
+>
+  {({ onItemsRendered, ref }) => (
+    <List
+      height={height}
+      width="100%"
+      itemCount={itemCount}
+      itemSize={rowHeight}
+      onItemsRendered={onItemsRendered}
+      ref={ref}
+    >
+      {Row}
+    </List>
+  )}
+</InfiniteLoader>
 ```
 
-### 5.2 Drag and Drop
+### 5.2 Column Management
 
-Implemented using React DnD with the following components:
+The column management system allows users to customize their table view:
 
-1. **Kanban Board**: Allows dragging tasks between status columns
-2. **Table Columns**: Supports reordering columns via drag and drop
-3. **DragSources**: Task cards and column headers act as drag sources
-4. **DropTargets**: Status columns and column positions act as drop targets
-5. **State Updates**: Trigger Redux actions on successful drop events
+1. **State Management**: Redux stores column visibility and order
+2. **Persistence**: LocalStorage maintains user preferences
+3. **UI Implementation**: Settings dialog with drag-and-drop reordering
+4. **Integration**: Dynamic table column rendering based on saved preferences
 
-### 5.3 Sorting and Filtering
+```typescript
+// Column management in Redux
+const uiSlice = createSlice({
+  name: "ui",
+  initialState,
+  reducers: {
+    updateColumnVisibility: (state, action) => {
+      const { key, visible } = action.payload;
+      const columnIndex = state.columnSettings.findIndex(
+        (col) => col.key === key
+      );
 
-Implemented in Redux with the following approach:
+      if (columnIndex >= 0) {
+        state.columnSettings[columnIndex].visible = visible;
 
-1. **Filter Actions**: Dispatch actions to update filter criteria in state
-2. **Filter Application**: Apply filters to the complete items list to create filteredItems
-3. **Memoization**: Use selector memoization to prevent unnecessary recalculations
-4. **Composable Filters**: Chain multiple filter conditions (status, priority, search)
-5. **Sorting Logic**: Sort results based on user-selected field and direction
+        // Regenerate tableColumns array
+        state.tableColumns = state.columnSettings
+          .filter((col) => col.visible)
+          .sort((a, b) => a.order - b.order)
+          .map((col) => col.key);
+
+        // Save to localStorage
+        localStorage.setItem(
+          "columnSettings",
+          JSON.stringify(state.columnSettings)
+        );
+      }
+    },
+    // Additional reducers...
+  },
+});
+```
+
+### 5.3 Dashboard Filtering
+
+The dashboard implements synchronized filtering with the table view:
+
+1. **Shared Filter State**: Redux maintains filter criteria used by both views
+2. **Filter Components**: Reusable filter components in both dashboard and table
+3. **Data Transformation**: Filtered data processed before rendering charts
+4. **Real-time Updates**: Charts update immediately when filters change
+
+```typescript
+// Dashboard filter implementation
+useEffect(() => {
+  // Apply filters to chart data
+  const filteredData = applyFilters(
+    rawData,
+    filterStatus,
+    filterPriority,
+    searchQuery
+  );
+
+  setChartData(transformForChart(filteredData));
+}, [rawData, filterStatus, filterPriority, searchQuery]);
+```
+
+### 5.4 Drag and Drop
+
+Implemented using React DnD for multiple features:
+
+1. **Column Reordering**: Settings panel allows dragging to reorder columns
+2. **Kanban Tasks**: Tasks can be dragged between status columns
+3. **Table Columns**: Column headers can be dragged to reorder (legacy)
 
 ## 6. Performance Considerations
 
 ### 6.1 Optimizations
 
-1. **Virtual Scrolling**: Only render visible items in the viewport
-2. **Memoization**: Use React.memo and useMemo to prevent unnecessary re-renders
-3. **Code Splitting**: Route-based and component-based splitting
-4. **Lazy Loading**: Defer loading of non-critical components
-5. **Debouncing**: Implement for search queries and scroll handlers
-6. **Image Optimization**: Next.js Image component for optimized images
+1. **Virtualized Rendering**: Only visible table rows are rendered
+2. **Memoization**: React.memo and useMemo prevent unnecessary re-renders
+3. **Selective Updates**: Redux selectors optimize component updates
+4. **Code Splitting**: Route-based and component-based splitting
+5. **Lazy Loading**: Incremental data loading with infinite scroll
+6. **Persistence**: LocalStorage caching for user preferences
 
 ### 6.2 Rendering Strategy
 
 1. **Initial Load**: Server-side rendering for first meaningful paint
-2. **Data Fetching**: Client-side data fetching with loading states
-3. **State Updates**: Optimized Redux updates to minimize re-renders
-4. **Transition Animations**: CSS transitions for smooth UI changes
+2. **Data Fetching**: Efficient client-side data fetching with loading states
+3. **Virtualization**: Windowed rendering for large data sets
+4. **State Updates**: Optimized Redux updates to minimize re-renders
+5. **Transition Animations**: Smooth CSS transitions for UI changes
 
 ## 7. Testing Strategy
 
@@ -288,6 +383,8 @@ Implemented in Redux with the following approach:
 6. **Team Collaboration**: Sharing and assignment features
 7. **Integrations**: Calendar, email, and third-party services
 8. **Mobile Application**: Native mobile apps using React Native
+9. **Advanced Filtering**: More sophisticated filter combinations
+10. **Bulk Actions**: Multi-select and batch operations
 
 ## 9. Security Considerations
 
@@ -301,5 +398,5 @@ Implemented in Redux with the following approach:
 ---
 
 <div align="center">
-  <p>Document Version: 1.0 | Last Updated: March 31, 2025</p>
+  <p>Document Version: 1.1 | Last Updated: March 31, 2025</p>
 </div>

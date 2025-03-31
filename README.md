@@ -26,17 +26,32 @@
 
 Orbital is a sophisticated task management platform built with the modern web stack, offering:
 
-- **Intuitive Dashboard**: Visualize your workflow with interactive charts and key metrics
-- **Dual-View Task Management**: Switch seamlessly between Table and Kanban views
-- **Infinite Scroll**: Smooth scrolling experience with optimized data loading
-- **Advanced Filtering & Sorting**: Find what you need, when you need it
-- **Drag & Drop Interface**: Easy task organization with intuitive controls
-- **Dark/Light Mode**: Work comfortably in any environment
-- **Responsive Design**: Perfect experience on any device
-- **Real-time Updates**: Task statuses update instantly across the application
-- **Global Search**: Find any task quickly with ⌘+K shortcuts
-- **Task Comments**: Collaborate effectively with integrated comments
-- **Customizable UI**: Drag and rearrange columns to your preference
+- **Intuitive Dashboard**:
+
+  - Interactive charts with real-time data visualization
+  - Consistent filters matching table view filters
+  - Key metric cards for quick insights
+
+- **Advanced Task Management**:
+
+  - Toggle between Table and Kanban views
+  - Customizable columns via Settings panel
+  - Drag-and-drop column reordering
+  - Persistent column visibility settings
+  - High-performance virtualized table for large datasets
+  - Advanced filtering by status, priority, and keyword search
+
+- **Task Details**:
+
+  - Rich task detail view in slide-out drawer
+  - Comment system for collaboration
+  - Task status and priority management
+
+- **UX Features**:
+  - Global search with keyboard shortcut (⌘+K)
+  - Dark/light theme toggle
+  - Mobile-responsive design
+  - Infinite scrolling for efficient data loading
 
 ## 🛠️ Tech Stack
 
@@ -49,6 +64,7 @@ Orbital leverages cutting-edge technologies:
 - **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
 - **Data Visualization**: [Recharts](https://recharts.org/en-US/)
 - **Drag & Drop**: [React DnD](https://react-dnd.github.io/react-dnd/)
+- **Virtualization**: [react-window](https://github.com/bvaughn/react-window)
 - **Date Handling**: [date-fns](https://date-fns.org/)
 - **Icons**: [Lucide React](https://lucide.dev/)
 
@@ -105,6 +121,7 @@ orbital/
 │   ├── components/       # Reusable components
 │   │   ├── dashboard/    # Dashboard-specific components
 │   │   ├── global/       # Global components (navbar, sidebar)
+│   │   ├── settings/     # Settings components (column management)
 │   │   ├── tasks/        # Task-specific components
 │   │   └── ui/           # UI components (shadcn/ui)
 │   ├── hooks/            # Custom React hooks
@@ -126,23 +143,55 @@ orbital/
   <img src="/public/app-screenshot.png" alt="Orbital Dashboard" width="90%" />
 </div>
 
-## ⚙️ Development
+## ⚙️ Performance Optimizations
 
-### Building for Production
+Orbital includes several performance optimizations:
 
-```bash
-npm run build
-# or
-yarn build
-```
+1. **Virtualized Table**:
 
-### Running Tests
+   - Uses react-window for efficient rendering of large datasets
+   - Only renders visible rows, reducing DOM elements and memory usage
+   - Maintains smooth scrolling even with thousands of items
 
-```bash
-npm run test
-# or
-yarn test
-```
+2. **Efficient State Management**:
+
+   - Optimized Redux store with proper memoization
+   - Normalized state structure for faster lookups
+   - Selective component re-rendering
+
+3. **Lazy Loading**:
+
+   - Incremental data loading through infinite scroll
+   - Route-based code splitting
+   - Deferred component loading
+
+4. **Resource Optimization**:
+   - Optimized asset loading
+   - Efficient data transformations
+   - Local storage caching for user preferences
+
+## 🔄 Column Management
+
+The column management feature allows users to customize their table view:
+
+1. **Column Visibility**:
+
+   - Show/hide specific columns based on preference
+   - Changes persist across sessions via localStorage
+
+2. **Column Ordering**:
+
+   - Drag-and-drop interface for reordering columns
+   - Visual feedback during drag operations
+
+3. **Reset Functionality**:
+
+   - One-click reset to default column configuration
+   - Accessible through Settings panel
+
+4. **Integration**:
+   - Settings accessible from the main navigation
+   - Changes apply instantly to the table view
 
 ## 🔗 Additional Info
 
@@ -176,5 +225,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  <p>Made with ❤️ by the Udit Garg</p>
+  <p>Made with ❤️ by the Orbital Team</p>
 </div>
