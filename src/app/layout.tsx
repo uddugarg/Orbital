@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/provider/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ReduxProvider } from "@/store/provider";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -43,6 +44,7 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </ReduxProvider>
+        <Analytics />
       </body>
     </html>
   );
